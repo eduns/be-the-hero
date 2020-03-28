@@ -1,9 +1,13 @@
 const express = require('express');
 
-const ONGController = require('./controllers/ONGController');
+const OngController = require('./controllers/OngController');
 const IncidentController = require('./controllers/IncidentController');
 const ProfileController = require('./controllers/ProfileController');
 const SessionController = require('./controllers/SessionController');
+
+const OngValidator = require('./validators/OngValidator');
+const IncidentValidator = require('./validators/IncidentValidator');
+const ProfileValidator = require('./validators/ProfileValidator');
 
 const routes = express.Router();
 
@@ -13,15 +17,30 @@ const routes = express.Router();
  * Request Body: corpo da requisição, utilizado para criar ou alterar recursos
 */
 
+/** Rotas das sessões */
 routes.post('/sessions', SessionController.store);
 
-routes.get('/ongs', ONGController.index);
-routes.post('/ongs', ONGController.store);
 
-routes.get('/incidents', IncidentController.index)
+/** Rotas das ONGs */
+routes.get('/ongs', OngController.index);
+
+routes.post('/ongs',
+    OngValidator.storeOng(),
+    OngController.store);
+
+routes.get('/incidents',
+    IncidentValidator.indexIncidents(),
+    IncidentController.index);
+
+
+/** Rotas dos casos */
 routes.post('/incidents', IncidentController.store);
-routes.delete('/incidents/:id', IncidentController.delete);
+routes.delete('/incidents/:id',
+    IncidentValidator.deleteIncident(),
+    IncidentController.delete);
 
-routes.get('/profile', ProfileController.index);
+
+/** Rotas de casos específicos de uma ONG */
+routes.get('/profile', ProfileValidator.indexProfile(), ProfileController.index);
 
 module.exports = routes
